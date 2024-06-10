@@ -71,11 +71,16 @@ def find_thesaurus(word):
             if redis_get_result is None:
                 word = word + 'e'
                 redis_get_result = redis_instance.get(word)
-    redis_result = "{}".format(redis_get_result)
-    redis_result = re.sub("\t", '    ', redis_result)
-    result_array = redis_result.split("\n")
-    app.logger.info("zhx111: " + "<br>".join(result_array))
-    return { "result": "<br>".join(result_array) }
+    result_info = None
+    if redis_get_result is None:
+        result_info = "can not find in thesaurus"
+    else:
+        redis_string_result = str(redis_get_result)
+        redis_string_result = re.sub("\t", '    ', redis_string_result)
+        result_array = redis_string_result.split("\n")
+        result_info = "<br>".join(result_array)
+    app.logger.info("zhx111: " + result_info)
+    return { "result": result_info }
 
 @app.route("/pronunciation/<word>")
 def speak(word):
