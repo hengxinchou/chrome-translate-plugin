@@ -5,6 +5,7 @@ from markupsafe import escape
 from flask_cors import CORS
 import re
 import pyttsx3
+import os
 
 import json
 from urllib import request, parse
@@ -14,6 +15,9 @@ import inflect
 app = Flask(__name__)
 CORS(app)
 
+BAIDU_FANYI_APPID = os.getenv("BAIDU_FANYI_APPID")
+BAIDU_FANYI_PASSWD = os.getenv("BAIDU_FANYI_PASSWD")
+BAIDU_FANYI_SALT = os.getenv("BAIDU_FANYI_SALT")
 
 from logging.config import dictConfig
 
@@ -91,11 +95,11 @@ def translatesection():
     return { "result": translateResult }
 
 
-# 参考https://api.fanyi.baidu.com/product/113
+# see more https://api.fanyi.baidu.com/product/113
 def translateBaidu(q, from1, to):
-    appid = "xxxx"
-    salt = "xxxx"
-    passwd = "xxxx"
+    appid = BAIDU_FANYI_APPID
+    passwd = BAIDU_FANYI_PASSWD
+    salt = BAIDU_FANYI_SALT
 
     m = hashlib.md5()
     string1 = appid + q + salt + passwd

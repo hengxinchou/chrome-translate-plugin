@@ -32,16 +32,15 @@ please see  [Reference](https://sspai.com/post/52767)
      ```
      git clone git@github.com:zaibacu/thesaurus.git thesaurus
      # upload to reids 
-     python3 upload_english_words_to_redis.py
+     python3 upload_thesaurus_to_redis.py
      ```
-  3.  change your  baidu api information, vim  `flask-backend/chrome-backend.py`
+  3.  add environment variable, change your  baidu api information
 
-      ```python
-        def translateBaidu(q, from1, to):
-            # replace the following variable with your own information
-            appid = "xxxxx"
-            salt = "xxx"
-            passwd = "xxxx"
+      vim ~/.bashrc or ~/.zshrc
+      ```
+        export BAIDU_FANYI_APPID="xxxx"
+        export BAIDU_FANYI_PASSWD="xxxx"
+        export BAIDU_FANYI_SALT="xxxx"
       ```
       see more [baidu fanyi api documentation](https://api.fanyi.baidu.com/product/113)
 
