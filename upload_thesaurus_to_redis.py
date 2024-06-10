@@ -3,14 +3,10 @@ import redis
 result = {}
 r = redis.Redis(host='localhost', port=6379,decode_responses=True, charset='UTF-8', encoding='UTF-8')
 
-with open('./en_thesaurus.jsonl','r',encoding='utf8') as fp:
+with open('./thesaurus/en_thesaurus.jsonl','r',encoding='utf8') as fp:
     line = fp.readline()
     i = 1
     while line:
-        #if i >= 3:
-        #    break
-        # print(line)
-        # breakpoint()
         t1 = json_data = json.loads(line)
         result[t1['word']]=t1['desc']
         print("key {} is {}".format(t1['word'], t1['desc']))
