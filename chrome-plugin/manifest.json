@@ -7,13 +7,36 @@
     "activeTab",
     "scripting",
     "storage",
-    "https://localhost:5000/*"
+    "http://127.0.0.1:5000/*"
   ],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
     "default_popup": "popup.html"
+  },
+  "commands": {
+    "translate-selection-en": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Translate selected en text"
+    },
+    "translate-selection-zh": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+U",
+        "mac": "Command+Shift+U"
+      },
+      "description": "Translate selected zh text"
+    },
+    "thesaurus": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+H",
+        "mac": "Command+Shift+H"
+      },
+      "description": "thesaurus"
+    }
   },
   "content_scripts": [
     {

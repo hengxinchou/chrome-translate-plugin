@@ -21,6 +21,134 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
+chrome.commands.onCommand.addListener(async (command) => {
+  if( command === "thesaurus") {
+    chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {
+      if (tabs && tabs.length > 0) {
+        const tab = tabs[0];
+        chrome.scripting.executeScript({
+          target: {tabId: tab.id},
+          function: getSelectedText
+        }, async (results) => {
+          if (results && results[0]) {
+            const selectedText = results[0].result;
+            thesaurusText(selectedText, tab);
+          }
+        });
+      } else {
+        console.error('No active tabs found');
+      }
+    });
+  }
+  if (command === "translate-selection-en" || command === "translate-selection-zh") {
+    let from1 = "";
+    let to = "";
+    if (command === "translate-selection-en" ) {
+      from1 = 'en';
+      to = 'zh';
+    } else if (command === "translate-selection-zh" ) {
+      from1 = 'zh';
+      to = 'en';
+    }
+    chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {
+      if (tabs && tabs.length > 0) {
+        const tab = tabs[0];
+        console.log("zhx110: " + tab.id)
+        try {
+          console.log("zhx-114: ");
+          const results = await chrome.scripting.executeScript({
+            target: {tabId: tab.id},
+            function: getSelectedText,
+            world: 'MAIN'
+          });
+          if (results && results[0]) {
+            const selectedText = results[0].result;
+            // translateSelectedText(selectedText, tab.id);
+            console.log("zhx-115: " + selectedText);
+            translateSelectedText(selectedText, tab, from1, to);
+          }
+        } catch (error) {
+          console.error('Error executing script:', error);
+        }
+      } else {
+        console.error('No active tabs found');
+      }
+    });
+    // chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {
+    //   if (tabs && tabs.length > 0) {
+    //     const tab = tabs[0];
+    //     chrome.scripting.executeScript({
+    //       target: {tabId: tab.id},
+    //       function: getSelectedText
+    //     }, async (results) => {
+    //       if (results && results[0]) {
+    //         const selectedText = results[0].result;
+    //         console.log("zhx-115: " + selectedText);
+    //         translateSelectedText(selectedText, tab, from1, to);
+    //       }
+    //     });
+    //   } else {
+    //     console.error('No active tabs found');
+    //   }
+    // });
+  }
+});
+
+function getSelectedText() {
+  console.log("zhx-218 ");
+  // return window.getSelection().toString();
+  const selection = window.getSelection();
+
+  console.log("zhx-219 ");
+  if (!selection || selection.rangeCount === 0) return '';
+  
+  console.log("zhx-220 ");
+  let selectedText = selection.toString();
+  
+  if (!selectedText) {
+    console.log("zhx-212 ");
+    // 如果在 PDF 中没有选中文字，可能需要在嵌入的 iframe 中查找
+    const iframe = document.querySelector('embed[type="application/pdf"]') || document.querySelector('embed[type="application/x-google-chrome-pdf"]') || document.querySelector('iframe');
+    if (iframe) {
+      const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+      console.log("zhx-213 ");
+      selectedText = iframeDocument.getSelection().toString();
+    }
+  }
+
+  return selectedText;
+}
+
+function thesaurusText(selectedText, tab){
+    fetch('http://localhost:5000/thesaurus/' + encodeURIComponent(selectedText), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      showResponse(tab, data, selectedText);
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function translateSelectedText(selectedText, tab, from1, to){
+    console.log("zhx211: " + selectedText);
+    fetch('http://localhost:5000/translatesection', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ selectedText : selectedText , from: from1, to: to })
+    })
+    .then(response => response.json())
+    .then(data => {
+        showResponse(tab, data, selectedText);
+    })
+    .catch(error => console.error('Error:', error));
+}
+
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "thesaurusWord") {
     const selectedText = info.selectionText;
