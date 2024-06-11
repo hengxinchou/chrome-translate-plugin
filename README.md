@@ -10,6 +10,11 @@
  ![20240610-070643](img/20240610-070643.png) 
   3. support PDF reading on chrome
  ![20240609-150613](img/20240609-150613.png)
+  4. shortcut to trigger translation
+
+ * Ctrl + Shift + Y,  translate English to Chinese
+ * Ctrl + Shift + U,  translate Chinese to English
+ * Ctrl + Shift + H,  show english explaination
 
 # PREREQUISITES
  * Python3
