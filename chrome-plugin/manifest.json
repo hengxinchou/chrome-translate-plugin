@@ -7,7 +7,8 @@
     "activeTab",
     "scripting",
     "storage",
-    "http://127.0.0.1:5000/*"
+    "http://127.0.0.1:5000/*",
+    "tabs"
   ],
   "background": {
     "service_worker": "background.js"

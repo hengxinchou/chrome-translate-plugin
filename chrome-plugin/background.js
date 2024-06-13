@@ -1,15 +1,5 @@
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
-    id: "thesaurusWord",
-    title: "thesaurus",
-    contexts: ["selection"]
-  });
-  chrome.contextMenus.create({
-    id: "pronunciation",
-    title: "pronunciation",
-    contexts: ["selection"]
-  });
-  chrome.contextMenus.create({
     id: "translateSelectionEN",
     title: "translateSelectionEN",
     contexts: ["selection"]
@@ -17,6 +7,16 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "translateSelectionZH",
     title: "translateSelectionZH",
+    contexts: ["selection"]
+  });
+  chrome.contextMenus.create({
+    id: "thesaurusWord",
+    title: "thesaurus",
+    contexts: ["selection"]
+  });
+  chrome.contextMenus.create({
+    id: "pronunciation",
+    title: "pronunciation",
     contexts: ["selection"]
   });
 });
@@ -61,9 +61,12 @@ chrome.commands.onCommand.addListener(async (command) => {
             function: getSelectedText,
             world: 'MAIN'
           });
+          console.log("zhx-114: ");
           if (results && results[0]) {
+            console.log("zhx-1110: " + results);
             const selectedText = results[0].result;
-            // translateSelectedText(selectedText, tab.id);
+            console.log("zhx-1111: " + results[0]);
+            console.log("zhx-1112: " + results[0].result);
             console.log("zhx-115: " + selectedText);
             translateSelectedText(selectedText, tab, from1, to);
           }
@@ -100,7 +103,8 @@ function getSelectedText() {
   const selection = window.getSelection();
 
   console.log("zhx-219 ");
-  if (!selection || selection.rangeCount === 0) return '';
+  // if (!selection || selection.rangeCount === 0) return '';
+  // if (!selection || selection.rangeCount === 0) return '';
   
   console.log("zhx-220 ");
   let selectedText = selection.toString();
@@ -108,11 +112,22 @@ function getSelectedText() {
   if (!selectedText) {
     console.log("zhx-212 ");
     // 如果在 PDF 中没有选中文字，可能需要在嵌入的 iframe 中查找
-    const iframe = document.querySelector('embed[type="application/pdf"]') || document.querySelector('embed[type="application/x-google-chrome-pdf"]') || document.querySelector('iframe');
-    if (iframe) {
-      const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-      console.log("zhx-213 ");
-      selectedText = iframeDocument.getSelection().toString();
+    // const iframe = document.querySelector('embed[type="application/pdf"]') || document.querySelector('embed[type="application/x-google-chrome-pdf"]') || document.querySelector('iframe');
+    // if (iframe) {
+    //   const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+    //   console.log("zhx-213 ");
+    //   selectedText = iframeDocument.getSelection().toString();
+    // }
+    const embeds = document.querySelectorAll('embed[type="application/x-google-chrome-pdf"]');
+    for (let embed of embeds) {
+      const embedWindow = embed.contentWindow || embed;
+      const embedSelection = embedWindow.getSelection();
+      if (embedSelection) {
+        const embedSelectedText = embedSelection.toString();
+        if (embedSelectedText) {
+          return embedSelectedText;
+        }
+      }
     }
   }
 
@@ -135,6 +150,7 @@ function thesaurusText(selectedText, tab){
 
 function translateSelectedText(selectedText, tab, from1, to){
     console.log("zhx211: " + selectedText);
+    console.log("zhx311: tabid, " + tab.id);
     fetch('http://localhost:5000/translatesection', {
       method: 'POST',
       headers: {
@@ -204,16 +220,19 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 function showResponse(tab, data, selectedText){
       if (tab.id == "-1" ) {
           // send message to popup html
+          console.log("zhx411: tabid, " + tab.id);
           chrome.storage.local.set({ translatedText: data.result }, () => {
           chrome.action.openPopup();
           });
         }else if (tab != null) {
           const translatedText = data.result;
 
+          console.log("zhx412: tabid, " + tab.id);
           // send message content script
           chrome.tabs.sendMessage(tab.id, { translatedText, selectedText });
 
         } else {
+          console.log("zhx413: tabid, " + tab.id);
           // send message background script
           chrome.scripting.executeScript({
             target: { tabId: tab.id },
