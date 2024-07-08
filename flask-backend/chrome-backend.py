@@ -91,7 +91,7 @@ def speak(word):
     pyttsx3.speak(word)
     return { "result": "pronunciate " + word +  " successfully" }
 
-@app.post("/translatesection")
+@app.post("/translateselection")
 def translatesection():
     data = flask_request.get_json()
     selectedText = escape(data["selectedText"].strip())

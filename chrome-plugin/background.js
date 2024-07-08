@@ -151,7 +151,7 @@ function thesaurusText(selectedText, tab){
 function translateSelectedText(selectedText, tab, from1, to){
     console.log("zhx211: " + selectedText);
     console.log("zhx311: tabid, " + tab.id);
-    fetch('http://localhost:5000/translatesection', {
+    fetch('http://localhost:5000/translateselection', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -165,6 +165,7 @@ function translateSelectedText(selectedText, tab, from1, to){
     .catch(error => console.error('Error:', error));
 }
 
+// 鼠标右键的事件
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "thesaurusWord") {
     const selectedText = info.selectionText;
@@ -202,7 +203,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       to = 'en';
     }
     const selectedText = info.selectionText;
-    fetch('http://localhost:5000/translatesection', {
+    fetch('http://localhost:5000/translateselection', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
