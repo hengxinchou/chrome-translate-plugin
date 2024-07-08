@@ -74,7 +74,7 @@ def find_thesaurus(word):
                 word = word + 'e'
                 redis_get_result = redis_instance0.get(word)
     result_info = None
-    breakpoint()
+    # breakpoint()
     if redis_get_result is None:
         result_info = 'can not "{}" find in thesaurus'.format(word)
     else:
@@ -102,15 +102,15 @@ def translatesection():
 
 def getCacheOrCallApi(selectedText, from1, to):
     translateResult = None
-    md5_key = make_md5(selectedText)
+    md5_key = make_md5(selectedText+from1+to)
     redis_cache = redis_instance1.get(md5_key)
     if redis_cache:
         app.logger.info("###zhx112: " + str(redis_cache))
         translateResult = str(redis_cache)
-        redis_instance1.expire(md5_key, 1800)
+        redis_instance1.expire(md5_key, 86400)
     else:
         translateResult = translateBaidu(selectedText, from1, to)
-        redis_instance1.set(md5_key, translateResult, 1800)
+        redis_instance1.set(md5_key, translateResult, 86400)
     app.logger.info("###zhx113: " + translateResult)
     return translateResult
 
