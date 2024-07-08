@@ -21,6 +21,7 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
+// 快捷键
 chrome.commands.onCommand.addListener(async (command) => {
   if( command === "thesaurus") {
     chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {
@@ -53,21 +54,21 @@ chrome.commands.onCommand.addListener(async (command) => {
     chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {
       if (tabs && tabs.length > 0) {
         const tab = tabs[0];
-        console.log("zhx110: " + tab.id)
+        // console.log("zhx110: " + tab.id)
         try {
-          console.log("zhx-114: ");
+          // console.log("zhx-114: ");
           const results = await chrome.scripting.executeScript({
             target: {tabId: tab.id},
             function: getSelectedText,
             world: 'MAIN'
           });
-          console.log("zhx-114: ");
+          // console.log("zhx-114: ");
           if (results && results[0]) {
-            console.log("zhx-1110: " + results);
+            // console.log("zhx-1110: " + results);
             const selectedText = results[0].result;
-            console.log("zhx-1111: " + results[0]);
-            console.log("zhx-1112: " + results[0].result);
-            console.log("zhx-115: " + selectedText);
+            // console.log("zhx-1111: " + results[0]);
+            // console.log("zhx-1112: " + results[0].result);
+            // console.log("zhx-115: " + selectedText);
             translateSelectedText(selectedText, tab, from1, to);
           }
         } catch (error) {
@@ -77,40 +78,23 @@ chrome.commands.onCommand.addListener(async (command) => {
         console.error('No active tabs found');
       }
     });
-    // chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {
-    //   if (tabs && tabs.length > 0) {
-    //     const tab = tabs[0];
-    //     chrome.scripting.executeScript({
-    //       target: {tabId: tab.id},
-    //       function: getSelectedText
-    //     }, async (results) => {
-    //       if (results && results[0]) {
-    //         const selectedText = results[0].result;
-    //         console.log("zhx-115: " + selectedText);
-    //         translateSelectedText(selectedText, tab, from1, to);
-    //       }
-    //     });
-    //   } else {
-    //     console.error('No active tabs found');
-    //   }
-    // });
   }
 });
 
 function getSelectedText() {
-  console.log("zhx-218 ");
+  // console.log("zhx-218 ");
   // return window.getSelection().toString();
   const selection = window.getSelection();
 
-  console.log("zhx-219 ");
+  // console.log("zhx-219 ");
   // if (!selection || selection.rangeCount === 0) return '';
   // if (!selection || selection.rangeCount === 0) return '';
   
-  console.log("zhx-220 ");
+  // console.log("zhx-220 ");
   let selectedText = selection.toString();
   
   if (!selectedText) {
-    console.log("zhx-212 ");
+    // console.log("zhx-212 ");
     // 如果在 PDF 中没有选中文字，可能需要在嵌入的 iframe 中查找
     // const iframe = document.querySelector('embed[type="application/pdf"]') || document.querySelector('embed[type="application/x-google-chrome-pdf"]') || document.querySelector('iframe');
     // if (iframe) {
